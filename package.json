@@ -1,0 +1,44 @@
+{
+  "name": "browser-based-file-system-mongodb",
+  "version": "1.0.0",
+  "description": "Large-scale browser-based file system",
+  "main": "./server",
+  "scripts": {
+    "start": "node ./server",
+    "start-dev": "nodemon --watch ./server  ./server",
+    "test-dev": "nodemon --watch ./test --watch ./server  -x npm run test",
+    "eslint:test": "node_modules/.bin/eslint --cache -c .eslintrc.js ./server/*.js ./test/*.js",
+    "eslint:fix": "node_modules/.bin/eslint --cache --fix -c .eslintrc.js ./server/*.js ./test/*.js",
+    "precommit": "npm run eslint:fix",
+    "test": "cross-env NODE_ENV='test' node ./node_modules/mocha/bin/mocha  --ui tdd  --timeout=10000 --exit ./test/**/*.spec.js",
+    "coverage": "cross-env NODE_ENV='test' node_modules/nyc/bin/nyc.js   npm run test",
+    "test-report": "NODE_ENV='test' node_modules/nyc/bin/nyc.js report -r html node_modules/mocha/bin/mocha  --timeout=10000  --exit  test/**/*.spec.js && xdg-open ./coverage/index.html >/dev/null 2>&1",
+    "test-jenkins": "NODE_ENV='test' node_modules/nyc/bin/nyc.js node_modules/mocha/bin/mocha --timeout=10000    --exit  test/**/*.spec.js && NODE_ENV='test' node_modules/nyc/bin/nyc.js report -r html node_modules/mocha/bin/mocha --timeout=10000   --exit  test/**/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reza-mirjahanian/browser-based-file-system-mongodb"
+  },
+  "author": "Reza Mirjahanian <rmirjahanian@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "4.17.21",
+    "cors": "2.8.5",
+    "express": "4.16.4",
+    "@hapi/joi": "17.1.1",
+    "joi": "17.4.0",
+    "moment": "2.29.1",
+    "axios": "0.21.1",
+    "mongoose": "5.13.2",
+    "md5": "2.2.1",
+    "cron": "1.8.2"
+  },
+  "devDependencies": {
+    "chai": "4.3.4",
+    "sinon-chai": "3.7.0",
+    "eslint": "7.30.0",
+    "mocha": "9.0.2",
+    "nyc": "14.1.1",
+    "sinon": "11.1.1"
+  }
+}

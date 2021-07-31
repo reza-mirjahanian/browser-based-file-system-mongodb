@@ -1,0 +1,8 @@
+# Add any directories, files, or patterns you don't want to be tracked by version control
+.idea
+node_modules
+package-lock.json
+.nyc_output/
+coverage/
+.eslintcache
+id_rsa
