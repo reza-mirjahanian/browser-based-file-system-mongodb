@@ -1,5 +1,7 @@
 'use strict';
 
+
+
 const logger = require('../utils/logger'),
   constants = require('../constants'),
   Model = require('../utils/mongoDB').getModel('File');
@@ -53,11 +55,13 @@ class File {
    * @return {Promise< {Object[]}|null>}
    */
   static async findFile({
-    path
+    path,
+    name
   }) {
     try {
-      return await Model.find({
+      return await Model.findOne({
         path,
+        name,
         deleteAt: null
       }).lean();
 
@@ -107,6 +111,59 @@ class File {
     } catch (e) {
       logger.error("File:findFileWithName()", e);
       return null;
+    }
+  }
+
+  // File or Folder
+  static async deleteFile({
+    name,
+    path,
+  }) {
+    try {
+      const file = await File.findFile({
+        name,
+        path,
+      });
+      if (file) {
+        const {
+          type
+        } = file;
+        if (type === 'file') {
+          await Model.updateOne({
+            _id: file._id
+          }, {
+            $set: {
+              deleteAt: new Date()
+            }
+          });
+        }
+        if (type === 'folder') { // Remove with sub files (Dangerous)
+          const pattern = new RegExp('^' + `${path}${name}/`, 'i');
+          await Model.updateOne({
+            _id: file._id
+          }, {
+            $set: {
+              deleteAt: new Date()
+            }
+          });
+          await Model.update({
+            path: pattern,
+            deleteAt: null
+          }, {
+            $set: {
+              deleteAt: new Date()
+            }
+          }, {
+            multi: true
+          });
+        }
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      logger.error("File:deleteFile()", e);
+      return false;
     }
   }
 

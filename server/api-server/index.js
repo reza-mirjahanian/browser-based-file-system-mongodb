@@ -81,4 +81,25 @@ app.post('/find-file-with-name', async (req, res) => {
   }
 });
 
+app.post('/delete-file', async (req, res) => {
+  try {
+    const {
+      path,
+      name,
+    } = req.body;
+
+    const result = await fileRepo.deleteFile({
+      path,
+      name,
+    });
+    return res.status(200).send(result);
+  } catch (err) {
+    logger.error(req.path, {
+      err
+    });
+    res.status(500).send("Error");
+  }
+});
+
+
 app.listen(constants.EXPRESS_PORT, () => logger.log(`listening on port ${constants.EXPRESS_PORT}!`));

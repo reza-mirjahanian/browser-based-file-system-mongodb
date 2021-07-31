@@ -99,12 +99,10 @@ suite('Testing Express API routes', () => {
         type: constants.FILE_TYPE.FILE
       });
 
-      const result = await fileRepo.findFile({
-        path: '/Programming/'
+      const file = await fileRepo.findFile({
+        path: '/Programming/',
+        name: 'NodeJS.pdf',
       });
-
-      const file = result[0];
-      expect(result).to.be.an('array').have.lengthOf(1);
       expect(file.name).to.be.equal('NodeJS.pdf');
       expect(file.type).to.be.equal('file');
       expect(file).to.have.all.keys('createdAt', 'updatedAt', 'deleteAt', 'name', 'type', 'path', '_id', '__v');
@@ -149,6 +147,40 @@ suite('Testing Express API routes', () => {
       });
       expect(files2).to.be.an('array').have.lengthOf(3);
       expect(_.map(files2, 'path')).to.have.members(['/', '/Books/Programming/', '/Books/Programming/Old/']);
+    });
+  });
+
+  suite('POST /delete-file', () => {
+    test('should Delete folders and files', async () => {
+      await _insertMockData();
+
+      const {
+        data
+      } = await axios.post(SERVER_URL + 'delete-file', {
+        path: '/Books/Programming/',
+        name: 'NodeJS.pdf',
+      });
+
+      expect(data).to.be.equal(true);
+      const file = await fileRepo.findFile({
+        path: '/Books/Programming/',
+        name: 'NodeJS.pdf',
+      });
+      expect(file).to.be.equal(null);
+
+      // Test sub folders
+      await axios.post(SERVER_URL + 'delete-file', {
+        path: '/Books/',
+        name: 'Programming',
+      });
+
+      const files = await fileRepo.findFileWithName({
+        path: '/Books/',
+        name: 'Programming',
+        includeSubFolder: true
+      });
+      expect(files).to.be.an('array').have.lengthOf(0);
+
     });
   });
 });
