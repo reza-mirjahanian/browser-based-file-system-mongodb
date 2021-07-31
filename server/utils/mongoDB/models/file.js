@@ -7,19 +7,16 @@ const
 class File extends Models {
   static schema() {
     return new Schema({
+      //@todo create text index
       name: {
         type: String,
         required: true,
         index: true
       },
-      ancestors: {
-        type: Array,
-        default: [],
-        index: true
-      },
-      parent: {
+      path: {
         type: String,
-        //@todo check for: index: true
+        default: [],
+        index: 'text'
       },
       type: {
         type: String,
@@ -28,6 +25,7 @@ class File extends Models {
       },
       deleteAt: {
         type: Date,
+        default: null,
         index: true
       }
 
