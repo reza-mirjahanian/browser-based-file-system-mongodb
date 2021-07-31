@@ -183,4 +183,27 @@ suite('Testing Express API routes', () => {
 
     });
   });
+
+  suite('POST /count-files', () => {
+    test('List folders to include the counts of files in each folder and its sub-folders', async () => {
+      await _insertMockData();
+
+      const {
+        data
+      } = await axios.post(SERVER_URL + 'count-files', {
+        path: '/Books/',
+      });
+
+      expect(data).to.be.deep.equal([{
+          _id: '/Books/Programming/Old/',
+          count: 1
+        },
+        {
+          _id: '/Books/Programming/',
+          count: 3
+        }
+      ]);
+
+    });
+  });
 });

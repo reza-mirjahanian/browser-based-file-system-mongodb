@@ -101,5 +101,23 @@ app.post('/delete-file', async (req, res) => {
   }
 });
 
+app.post('/count-files', async (req, res) => {
+  try {
+    const {
+      path,
+    } = req.body;
+
+    const result = await fileRepo.countFiles({
+      path,
+    });
+    return res.status(200).send(result);
+  } catch (err) {
+    logger.error(req.path, {
+      err
+    });
+    res.status(500).send("Error");
+  }
+});
+
 
 app.listen(constants.EXPRESS_PORT, () => logger.log(`listening on port ${constants.EXPRESS_PORT}!`));

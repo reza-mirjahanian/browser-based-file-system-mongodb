@@ -168,6 +168,35 @@ class File {
   }
 
 
+  // Count files
+  static async countFiles({
+    path,
+  }) {
+    try {
+      const pattern = new RegExp('^' + path, 'i')
+      return  await Model.aggregate([{
+          $match: {
+            path: pattern,
+            deleteAt: null,
+            type: 'file'
+          }
+        },
+        {
+          $group: {
+            _id: "$path",
+            count: {
+              $sum: 1
+            }
+          }
+        }
+      ]);
+
+    } catch (e) {
+      logger.error("File:countFiles()", e);
+      return false;
+    }
+  }
+
 }
 
 module.exports = File;
