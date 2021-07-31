@@ -21,16 +21,23 @@ class File extends Models {
         type: String,
         //@todo check for: index: true
       },
-      deleteAt:{
+      type: {
+        type: String,
+        enum: ['file', 'folder'],
+        default: 'file'
+      },
+      deleteAt: {
         type: Date,
         index: true
       }
 
-    }, { timestamps: true });
+    }, {
+      timestamps: true
+    });
   }
 
   static collectionName() {
-    return 'order';
+    return 'file';
   }
 
   static connection() {
