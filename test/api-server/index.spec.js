@@ -193,16 +193,16 @@ suite('Testing Express API routes', () => {
       } = await axios.post(SERVER_URL + 'count-files', {
         path: '/Books/',
       });
+      const count1 = _.find(data, {
+        count: 1
+      });
+      expect(count1._id).to.be.equal("/Books/Programming/Old/");
 
-      expect(data).to.be.deep.equal([{
-          _id: '/Books/Programming/Old/',
-          count: 1
-        },
-        {
-          _id: '/Books/Programming/',
-          count: 3
-        }
-      ]);
+      const count3 = _.find(data, {
+        count: 3
+      });
+      expect(count3._id).to.be.equal("/Books/Programming/");
+
 
     });
   });
