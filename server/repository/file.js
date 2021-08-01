@@ -174,7 +174,7 @@ class File {
   }) {
     try {
       const pattern = new RegExp('^' + path, 'i')
-      return  await Model.aggregate([{
+      return await Model.aggregate([{
           $match: {
             path: pattern,
             deleteAt: null,
@@ -193,6 +193,69 @@ class File {
 
     } catch (e) {
       logger.error("File:countFiles()", e);
+      return false;
+    }
+  }
+
+  //@todo we should use commit, rollback
+  //@todo not very efficient
+  // Rename File or Folder
+  static async renameFile({
+    name,
+    path,
+    newName
+  }) {
+    try {
+      const file = await File.findFile({
+        name,
+        path,
+      });
+
+      if (file) {
+        const {
+          type
+        } = file;
+
+        if (type === 'file') {
+          return await Model.updateOne({
+            _id: file._id
+          }, {
+            $set: {
+              name: newName
+            }
+          });
+        }
+
+        if (type === 'folder') { // Rename with sub files
+          const pattern = new RegExp('^' + `${path}${name}/`, 'i');
+          await Model.updateOne({
+            _id: file._id
+          }, {
+            $set: {
+              name: newName
+            }
+          });
+          await Model.updateMany({
+            path: pattern,
+
+          }, [{
+            $set: {
+              path: {
+                $replaceOne: {
+                  input: "$path",
+                  find: `/${name}/`,
+                  replacement: `/${newName}/`
+                }
+              }
+            }
+          }]);
+        }
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      logger.error("File:renameFile()", e);
       return false;
     }
   }
