@@ -15,7 +15,6 @@ class File extends Models {
       },
       path: {
         type: String,
-        default: [],
         index: 'text'
       },
       type: {

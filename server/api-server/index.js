@@ -119,5 +119,27 @@ app.post('/count-files', async (req, res) => {
   }
 });
 
+app.post('/rename-files', async (req, res) => {
+  try {
+    const {
+      path,
+      name,
+      newName
+    } = req.body;
+
+    const result = await fileRepo.renameFile({
+      path,
+      name,
+      newName
+    });
+    return res.status(200).send(result);
+  } catch (err) {
+    logger.error(req.path, {
+      err
+    });
+    res.status(500).send("Error");
+  }
+});
+
 
 app.listen(constants.EXPRESS_PORT, () => logger.log(`listening on port ${constants.EXPRESS_PORT}!`));

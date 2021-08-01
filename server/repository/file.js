@@ -34,7 +34,7 @@ class File {
 
     try {
       //@todo validation
-      //@todo ancestor exist
+      //@todo ancestor exist and duplication
       await Model.create({
         name,
         path,

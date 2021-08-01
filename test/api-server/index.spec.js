@@ -185,7 +185,7 @@ suite('Testing Express API routes', () => {
   });
 
   suite('POST /count-files', () => {
-    test('List folders to include the counts of files in each folder and its sub-folders', async () => {
+    test('should List folders to include the counts of files in each folder and its sub-folders', async () => {
       await _insertMockData();
 
       const {
@@ -203,6 +203,38 @@ suite('Testing Express API routes', () => {
       });
       expect(count3._id).to.be.equal("/Books/Programming/");
 
+
+    });
+  });
+
+  suite('POST /rename-files', () => {
+    test('should rename folders and files', async () => {
+      await _insertMockData();
+
+      await axios.post(SERVER_URL + 'rename-files', {
+        path: '/',
+        name: 'NodeJS.pdf',
+        newName: 'JavaScript.pdf'
+      });
+      const file = await fileRepo.findFile({
+        path: '/',
+        name: 'JavaScript.pdf',
+      });
+      expect(file.name).to.be.equal('JavaScript.pdf');
+
+      // Rename folder
+      await axios.post(SERVER_URL + 'rename-files', {
+        path: '/Books/',
+        name: 'Programming',
+        newName: 'Programming2021'
+      });
+
+      const files = await fileRepo.findFileWithName({
+        path: '/Books/Programming2021/',
+        name: 'NodeJS.pdf',
+        includeSubFolder: true
+      });
+      expect(files).to.be.an('array').have.lengthOf(2);
 
     });
   });
